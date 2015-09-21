@@ -149,7 +149,7 @@ static CGFloat const kAvatarImageWidth = 30.0f;
     NSTimeZone *currentTimezone = [NSTimeZone systemTimeZone];
     [formatter setTimeZone:currentTimezone];
     [formatter setDateFormat:@"yyyy-MM-dd"];
-    NSDate *sendDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    NSDate *sendDate = [NSDate dateWithTimeIntervalSince1970:timestamp/1000];
     
     NSString *result = [formatter stringFromDate:sendDate];
     return result;
