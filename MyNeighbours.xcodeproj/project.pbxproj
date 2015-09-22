@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		40D5A4391BB16BA5004EB80D /* ImageResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 40D5A4381BB16BA5004EB80D /* ImageResource.m */; settings = {ASSET_TAGS = (); }; };
+		40D5A43C1BB16FE6004EB80D /* NeighbourTableViewCell+Height.m in Sources */ = {isa = PBXBuildFile; fileRef = 40D5A43B1BB16FE6004EB80D /* NeighbourTableViewCell+Height.m */; settings = {ASSET_TAGS = (); }; };
 		40DA76DC1BAFAA8300D4BE6B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 40DA76DB1BAFAA8300D4BE6B /* main.m */; };
 		40DA76DF1BAFAA8300D4BE6B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 40DA76DE1BAFAA8300D4BE6B /* AppDelegate.m */; };
 		40DA76E21BAFAA8300D4BE6B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40DA76E11BAFAA8300D4BE6B /* ViewController.m */; };
@@ -45,6 +47,10 @@
 
 /* Begin PBXFileReference section */
 		2AB5CB843BA554E9D704F6D1 /* Pods-MyNeighbours.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyNeighbours.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyNeighbours/Pods-MyNeighbours.release.xcconfig"; sourceTree = "<group>"; };
+		40D5A4371BB16BA5004EB80D /* ImageResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageResource.h; sourceTree = "<group>"; };
+		40D5A4381BB16BA5004EB80D /* ImageResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageResource.m; sourceTree = "<group>"; };
+		40D5A43A1BB16FE6004EB80D /* NeighbourTableViewCell+Height.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NeighbourTableViewCell+Height.h"; sourceTree = "<group>"; };
+		40D5A43B1BB16FE6004EB80D /* NeighbourTableViewCell+Height.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NeighbourTableViewCell+Height.m"; sourceTree = "<group>"; };
 		40DA76D61BAFAA8300D4BE6B /* MyNeighbours.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyNeighbours.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		40DA76DA1BAFAA8300D4BE6B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		40DA76DB1BAFAA8300D4BE6B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -205,6 +211,8 @@
 				40DA77271BAFCB7900D4BE6B /* NeighbourInfo.m */,
 				40DA77291BAFCBF300D4BE6B /* Comment.h */,
 				40DA772A1BAFCBF300D4BE6B /* Comment.m */,
+				40D5A4371BB16BA5004EB80D /* ImageResource.h */,
+				40D5A4381BB16BA5004EB80D /* ImageResource.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -281,6 +289,8 @@
 			children = (
 				40DA77231BAFB5CB00D4BE6B /* NeighbourTableViewCell.h */,
 				40DA77241BAFB5CB00D4BE6B /* NeighbourTableViewCell.m */,
+				40D5A43A1BB16FE6004EB80D /* NeighbourTableViewCell+Height.h */,
+				40D5A43B1BB16FE6004EB80D /* NeighbourTableViewCell+Height.m */,
 			);
 			name = TableViewCell;
 			sourceTree = "<group>";
@@ -437,6 +447,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40D5A4391BB16BA5004EB80D /* ImageResource.m in Sources */,
 				40DA76E21BAFAA8300D4BE6B /* ViewController.m in Sources */,
 				40DA77341BAFD7DE00D4BE6B /* NSString+Additions.m in Sources */,
 				40DA77151BAFAB4000D4BE6B /* UIView+CornerMaskLayer.m in Sources */,
@@ -444,6 +455,7 @@
 				40DA77331BAFD7DE00D4BE6B /* UIView+Additions.m in Sources */,
 				40DA77111BAFAB4000D4BE6B /* UIColor+HexColor.m in Sources */,
 				40DA77201BAFAB5F00D4BE6B /* BaseTabBarViewController.m in Sources */,
+				40D5A43C1BB16FE6004EB80D /* NeighbourTableViewCell+Height.m in Sources */,
 				40DA77371BAFDEFC00D4BE6B /* NeighbourInfo+request.m in Sources */,
 				40DA771E1BAFAB5F00D4BE6B /* BaseCollectionViewController.m in Sources */,
 				40DA76DF1BAFAA8300D4BE6B /* AppDelegate.m in Sources */,
@@ -583,9 +595,12 @@
 			baseConfigurationReference = F7B9BC0A80C7B135D1564A9B /* Pods-MyNeighbours.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = MyNeighbours/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zangqilong.neighbour;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "4772e197-47fe-4c32-8b7d-6ac427613896";
 			};
 			name = Debug;
 		};
@@ -594,9 +609,12 @@
 			baseConfigurationReference = 2AB5CB843BA554E9D704F6D1 /* Pods-MyNeighbours.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = MyNeighbours/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zangqilong.neighbour;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "4772e197-47fe-4c32-8b7d-6ac427613896";
 			};
 			name = Release;
 		};

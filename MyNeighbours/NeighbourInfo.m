@@ -7,6 +7,7 @@
 //
 
 #import "NeighbourInfo.h"
+#import "ImageResource.h"
 #import "NSValueTransformer+MTLPredefinedTransformerAdditions.h"
 
 @implementation NeighbourInfo
@@ -21,6 +22,7 @@
              @"content": @"content",
              @"hotFlag": @"hotFlag",
              @"subject": @"subject",
+             @"mediaFiles": @"mediaFiles"
              };
 }
 
@@ -36,4 +38,10 @@
 {
     return [NSValueTransformer valueTransformerForName:MTLURLValueTransformerName];
 }
+
++ (NSValueTransformer *)mediaFilesJSONTransformer
+{
+    return [MTLJSONAdapter arrayTransformerWithModelClass:[ImageResource class]];
+}
+
 @end

@@ -11,12 +11,16 @@
 #import "UIView+CornerMaskLayer.h"
 #import "UIColor+HexColor.h"
 #import "UIScreen+Additions.h"
+#import "ImageResource.h"
 
 static CGFloat const kSubViewPadding = 8.0f;
 static CGFloat const kAvatarImageWidth = 30.0f;
+static CGFloat const kImageViewPadding = 5.0f;
 
 @interface NeighbourTableViewCell ()
 {
+    NSMutableArray *resouceImageViewArray;
+    
     UIImageView *avatarImageView;
     UILabel *hotLabel;
     UILabel *subjectLabel;
@@ -24,6 +28,7 @@ static CGFloat const kAvatarImageWidth = 30.0f;
     UILabel *contentLabel;
     UILabel *displayNameLabel;
     UILabel *forumNameLabel;
+    UILabel *checkFullLabel;
 }
 
 @end
@@ -52,6 +57,7 @@ static CGFloat const kAvatarImageWidth = 30.0f;
 
 - (void)setupUI
 {
+    resouceImageViewArray = [NSMutableArray array];
     avatarImageView = [[UIImageView alloc] initWithFrame:CGRectMake(kSubViewPadding, kSubViewPadding, kAvatarImageWidth, kAvatarImageWidth)];
     [avatarImageView addCornerMaskLayerWithRadius:kAvatarImageWidth/2];
     [self.contentView addSubview:avatarImageView];
@@ -93,12 +99,20 @@ static CGFloat const kAvatarImageWidth = 30.0f;
     forumNameLabel.font = FontWithSize(10);
     [self.contentView addSubview:forumNameLabel];
     
+    checkFullLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    checkFullLabel.textColor = [UIColor colorWithHex:@"#9CC67C"];
+    checkFullLabel.font = FontWithSize(15);
+    checkFullLabel.textAlignment = NSTextAlignmentLeft;
+    checkFullLabel.text = @"查看全文";
+    [self.contentView addSubview:checkFullLabel];
+    
 }
 
 #pragma mark - Bind Data
 
-- (void)bindDataWithNeighbourModel:(NeighbourInfo *)neighbour
+- (CGFloat)bindDataWithNeighbourModel:(NeighbourInfo *)neighbour
 {
+    CGFloat currentY = 0;
     [avatarImageView sd_setImageWithURL:neighbour.senderAvatar];
     
     hotLabel.hidden = ![neighbour.hotFlag boolValue];
@@ -109,11 +123,9 @@ static CGFloat const kAvatarImageWidth = 30.0f;
     
 
     CGFloat subjectLabelHeight = 15;
-    if ([neighbour.subject boundingRectWithSize:CGSizeMake(CGRectGetMinX(timeLabel.frame) - kSubViewPadding, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont boldSystemFontOfSize:15]} context:nil].size.height > 15) {
-        subjectLabelHeight = 30;
-    }
     subjectLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMinY(avatarImageView.frame), CGRectGetMinX(timeLabel.frame) - kSubViewPadding, subjectLabelHeight);
     subjectLabel.text = neighbour.subject;
+    [subjectLabel sizeToFit];
     
     displayNameLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMaxY(subjectLabel.frame) + kSubViewPadding, 0, 0);
     displayNameLabel.text = neighbour.displayName;
@@ -125,15 +137,67 @@ static CGFloat const kAvatarImageWidth = 30.0f;
     
     CGFloat contentLabelHeight = 15;
     CGFloat contentLabelWidth = [UIScreen screenWidth] - CGRectGetMinX(subjectLabel.frame) - kSubViewPadding;
-    CGFloat contentHeight = [neighbour.content boundingRectWithSize:CGSizeMake(contentLabelWidth, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: FontWithSize(15)} context:nil].size.height ;
-    if (contentHeight > 15 && contentHeight < 30) {
-        contentLabelHeight = 30;
-    }else if(contentHeight > 30){
-        contentLabelHeight = 45;
-    }
+
     contentLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMaxY(displayNameLabel.frame) + kSubViewPadding, contentLabelWidth, contentLabelHeight);
     contentLabel.text = neighbour.content;
+    [contentLabel sizeToFit];
     
+    checkFullLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMaxY(contentLabel.frame) + kSubViewPadding, CGRectGetWidth(checkFullLabel.frame), CGRectGetHeight(checkFullLabel.frame));
+    [checkFullLabel sizeToFit];
+    
+    currentY = [self addMultiImageViewWithImageResourceArray:neighbour.mediaFiles withCurrentX:CGRectGetMinX(contentLabel.frame) andCurrentY:CGRectGetMaxY(checkFullLabel.frame) + kSubViewPadding];
+    
+    return currentY;
+}
+
+- (CGFloat)addMultiImageViewWithImageResourceArray:(NSArray *)sourceArray withCurrentX:(CGFloat)originX andCurrentY:(CGFloat)originY
+{
+    for (UIImageView *imageView in resouceImageViewArray) {
+        [imageView removeFromSuperview];
+    }
+    [resouceImageViewArray removeAllObjects];
+    
+    if (sourceArray.count == 0) {
+        return originY;
+    }
+    
+    CGFloat multiImageViewsHeight = 0;
+    CGFloat sourceImageViewWidth = 0;
+    if (sourceArray.count <= 3) {
+        sourceImageViewWidth = 75;
+        multiImageViewsHeight = 75;
+    }else
+    {
+        if (4 <= sourceArray.count && sourceArray.count <= 6) {
+            multiImageViewsHeight = 75*2+kImageViewPadding;
+        }else
+        {
+            multiImageViewsHeight = 75*3+kImageViewPadding*2;
+        }
+        sourceImageViewWidth = 75;
+    }
+    
+    for (int i = 0; i < sourceArray.count; i++) {
+        ImageResource *resource = sourceArray[i];
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+        if (i < 3) {
+            imageView.frame = CGRectMake(originX + i*sourceImageViewWidth + kImageViewPadding * i, originY, sourceImageViewWidth, sourceImageViewWidth);
+        }else if(i >=3 && i <=5)
+        {
+            imageView.frame = CGRectMake(originX + sourceImageViewWidth*(i%3) + kImageViewPadding * (i%3), originY + kImageViewPadding + sourceImageViewWidth, sourceImageViewWidth, sourceImageViewWidth);
+
+        }else
+        {
+            imageView.frame = CGRectMake(originX+ sourceImageViewWidth*(i%3) + kImageViewPadding * (i%3), originY + kImageViewPadding *2 + sourceImageViewWidth * 2, sourceImageViewWidth, sourceImageViewWidth);
+           
+        }
+        imageView.backgroundColor = [UIColor whiteColor];
+        [imageView sd_setImageWithURL:resource.resPath];
+        [self.contentView addSubview:imageView];
+        [resouceImageViewArray addObject:imageView];
+    }
+    
+    return multiImageViewsHeight + originY + kSubViewPadding;
 }
 
 - (void)draw
@@ -148,7 +212,7 @@ static CGFloat const kAvatarImageWidth = 30.0f;
      NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     NSTimeZone *currentTimezone = [NSTimeZone systemTimeZone];
     [formatter setTimeZone:currentTimezone];
-    [formatter setDateFormat:@"yyyy-MM-dd"];
+    [formatter setDateFormat:@"yy-MM-dd"];
     NSDate *sendDate = [NSDate dateWithTimeIntervalSince1970:timestamp/1000];
     
     NSString *result = [formatter stringFromDate:sendDate];

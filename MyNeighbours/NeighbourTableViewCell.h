@@ -13,6 +13,6 @@
 
 @interface NeighbourTableViewCell : UITableViewCell
 
-- (void)bindDataWithNeighbourModel:(NeighbourInfo *)neighbour;
+- (CGFloat)bindDataWithNeighbourModel:(NeighbourInfo *)neighbour;
 
 @end

@@ -18,7 +18,7 @@ static NSString * const kCellID = @"kNeighbourCellID";
 @interface ViewController ()<UITableViewDataSource, UITableViewDelegate>
 {
     NSArray *neighbourArray;
-    NeighbourInfo *neighbour;
+    NSMutableDictionary *heightDict;
 }
 @property (weak, nonatomic) IBOutlet UITableView *mTableView;
 
@@ -29,18 +29,18 @@ static NSString * const kCellID = @"kNeighbourCellID";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [_mTableView registerClass:[NeighbourTableViewCell class] forCellReuseIdentifier:kCellID];
-    NSDictionary *testDict = [NSDictionary dictionaryWithContentsOfJSONString:@"TestJSONData" andFileType:@"json"];
- //   NSLog(@"%@",testDict);
+    heightDict = [NSMutableDictionary dictionary];
     
+    _mTableView.tableFooterView = [[UIView alloc] init];
+    [_mTableView registerClass:[NeighbourTableViewCell class] forCellReuseIdentifier:kCellID];
+    _mTableView.estimatedRowHeight = 100;
+    
+    NSDictionary *testDict = [NSDictionary dictionaryWithContentsOfJSONString:@"TestJSONData" andFileType:@"json"];
     
     neighbourArray = [MTLJSONAdapter modelsOfClass:[NeighbourInfo class] fromJSONArray:testDict[@"results"] error:nil];
-    NSLog(@"neighbour is %@", neighbourArray);
-    
-    neighbour = neighbourArray[3];
     
     [_mTableView reloadData];
-    // Do any additional setup after loading the view, typically from a nib.
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -52,22 +52,31 @@ static NSString * const kCellID = @"kNeighbourCellID";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    return neighbourArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NeighbourTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCellID];
     
+    NeighbourInfo *neighbourInfo = neighbourArray[indexPath.row];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    [cell bindDataWithNeighbourModel:neighbour];
+    CGFloat cellHeight = [cell bindDataWithNeighbourModel:neighbourInfo];
+    if (!heightDict[indexPath]) {
+        
+        heightDict[indexPath] = @(cellHeight);
+      
+    }
     
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 200;
+    if (!heightDict[indexPath]) {
+        return 200;
+    }
+    return [heightDict[indexPath] floatValue];
 }
 
 @end
