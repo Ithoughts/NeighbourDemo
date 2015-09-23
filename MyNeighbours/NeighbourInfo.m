@@ -8,6 +8,7 @@
 
 #import "NeighbourInfo.h"
 #import "ImageResource.h"
+#import "Comment.h"
 #import "NSValueTransformer+MTLPredefinedTransformerAdditions.h"
 
 @implementation NeighbourInfo
@@ -22,7 +23,11 @@
              @"content": @"content",
              @"hotFlag": @"hotFlag",
              @"subject": @"subject",
-             @"mediaFiles": @"mediaFiles"
+             @"mediaFiles": @"mediaFiles",
+             @"viewNum": @"viewNum",
+             @"likesNum": @"likesNum",
+             @"commentNum": @"commentNum",
+             @"comments": @"comments",
              };
 }
 
@@ -42,6 +47,11 @@
 + (NSValueTransformer *)mediaFilesJSONTransformer
 {
     return [MTLJSONAdapter arrayTransformerWithModelClass:[ImageResource class]];
+}
+
++ (NSValueTransformer *)commentsJSONTransformer
+{
+    return [MTLJSONAdapter arrayTransformerWithModelClass:[Comment class]];
 }
 
 @end

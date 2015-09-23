@@ -16,12 +16,21 @@
 static CGFloat const kSubViewPadding = 8.0f;
 static CGFloat const kAvatarImageWidth = 30.0f;
 static CGFloat const kImageViewPadding = 5.0f;
+static CGFloat const kResImageViewWidth = 75.0f;
+static CGFloat const kIconImageViewWidth = 15.0f;
+
+static NSString * const kGreenColorHex = @"#9CC67C";
 
 @interface NeighbourTableViewCell ()
 {
     NSMutableArray *resouceImageViewArray;
     
     UIImageView *avatarImageView;
+    UIImageView *likeIconImageView;
+    UIImageView *viewIconImageView;
+    UIImageView *commentIconImageView;
+    UIImageView *shareIconImageView;
+    
     UILabel *hotLabel;
     UILabel *subjectLabel;
     UILabel *timeLabel;
@@ -29,6 +38,10 @@ static CGFloat const kImageViewPadding = 5.0f;
     UILabel *displayNameLabel;
     UILabel *forumNameLabel;
     UILabel *checkFullLabel;
+    
+    UILabel *likeNumLabel;
+    UILabel *commentNumLabel;
+    UILabel *viewNumLabel;
 }
 
 @end
@@ -64,7 +77,7 @@ static CGFloat const kImageViewPadding = 5.0f;
     
     hotLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     hotLabel.textAlignment = NSTextAlignmentCenter;
-    hotLabel.backgroundColor = [UIColor colorWithHex:@"#9CC67C"];
+    hotLabel.backgroundColor = [UIColor colorWithHex:kGreenColorHex];
     hotLabel.textColor = [UIColor whiteColor];
     hotLabel.font = FontWithSize(8);
     hotLabel.text = @"推荐";
@@ -100,12 +113,46 @@ static CGFloat const kImageViewPadding = 5.0f;
     [self.contentView addSubview:forumNameLabel];
     
     checkFullLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    checkFullLabel.textColor = [UIColor colorWithHex:@"#9CC67C"];
+    checkFullLabel.textColor = [UIColor colorWithHex:kGreenColorHex];
     checkFullLabel.font = FontWithSize(15);
     checkFullLabel.textAlignment = NSTextAlignmentLeft;
     checkFullLabel.text = @"查看全文";
     [self.contentView addSubview:checkFullLabel];
     
+    likeIconImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    likeIconImageView.image = [UIImage imageNamed:@"like_number_icon"];
+    likeIconImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.contentView addSubview:likeIconImageView];
+    
+    commentIconImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    commentIconImageView.image = [UIImage imageNamed:@"comment_number_icon"];
+    commentIconImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.contentView addSubview:commentIconImageView];
+    
+    viewIconImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    viewIconImageView.image = [UIImage imageNamed:@"view_number_icon"];
+    viewIconImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.contentView addSubview:viewIconImageView];
+    
+    shareIconImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    shareIconImageView.image = [UIImage imageNamed:@"share_icon"];
+    shareIconImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.contentView addSubview:shareIconImageView];
+    
+    likeNumLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    likeNumLabel.textColor = [UIColor colorWithHex:kGreenColorHex];
+    likeNumLabel.font = FontWithSize(10);
+    [self.contentView addSubview:likeNumLabel];
+    
+    viewNumLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    viewNumLabel.textColor = [UIColor colorWithHex:kGreenColorHex];
+    viewNumLabel.font = FontWithSize(10);
+    [self.contentView addSubview:viewNumLabel];
+    
+    commentNumLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    commentNumLabel.textColor = [UIColor colorWithHex:kGreenColorHex];
+    commentNumLabel.font = FontWithSize(10);
+    [self.contentView addSubview:commentNumLabel];
 }
 
 #pragma mark - Bind Data
@@ -115,6 +162,9 @@ static CGFloat const kImageViewPadding = 5.0f;
     CGFloat currentY = 0;
     [avatarImageView sd_setImageWithURL:neighbour.senderAvatar];
     
+    CGFloat leftContentWidth = [UIScreen screenWidth] - CGRectGetMaxX(avatarImageView.frame) - kSubViewPadding;
+    CGFloat leftContentOriginX = CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding;
+    
     hotLabel.hidden = ![neighbour.hotFlag boolValue];
     
     timeLabel.text = [self tranlateTimestampsToString:[neighbour.sendTime doubleValue]];
@@ -123,11 +173,11 @@ static CGFloat const kImageViewPadding = 5.0f;
     
 
     CGFloat subjectLabelHeight = 15;
-    subjectLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMinY(avatarImageView.frame), CGRectGetMinX(timeLabel.frame) - kSubViewPadding, subjectLabelHeight);
+    subjectLabel.frame = CGRectMake(leftContentOriginX, CGRectGetMinY(avatarImageView.frame), leftContentWidth - CGRectGetWidth(timeLabel.frame) - kSubViewPadding * 2, subjectLabelHeight);
     subjectLabel.text = neighbour.subject;
     [subjectLabel sizeToFit];
     
-    displayNameLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMaxY(subjectLabel.frame) + kSubViewPadding, 0, 0);
+    displayNameLabel.frame = CGRectMake(leftContentOriginX, CGRectGetMaxY(subjectLabel.frame) + kSubViewPadding, 0, 0);
     displayNameLabel.text = neighbour.displayName;
     [displayNameLabel sizeToFit];
     
@@ -138,16 +188,34 @@ static CGFloat const kImageViewPadding = 5.0f;
     CGFloat contentLabelHeight = 15;
     CGFloat contentLabelWidth = [UIScreen screenWidth] - CGRectGetMinX(subjectLabel.frame) - kSubViewPadding;
 
-    contentLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMaxY(displayNameLabel.frame) + kSubViewPadding, contentLabelWidth, contentLabelHeight);
+    contentLabel.frame = CGRectMake(leftContentOriginX, CGRectGetMaxY(displayNameLabel.frame) + kSubViewPadding, contentLabelWidth, contentLabelHeight);
     contentLabel.text = neighbour.content;
     [contentLabel sizeToFit];
     
-    checkFullLabel.frame = CGRectMake(CGRectGetMaxX(avatarImageView.frame) + kSubViewPadding, CGRectGetMaxY(contentLabel.frame) + kSubViewPadding, CGRectGetWidth(checkFullLabel.frame), CGRectGetHeight(checkFullLabel.frame));
+    checkFullLabel.frame = CGRectMake(leftContentOriginX, CGRectGetMaxY(contentLabel.frame) + kSubViewPadding, CGRectGetWidth(checkFullLabel.frame), CGRectGetHeight(checkFullLabel.frame));
     [checkFullLabel sizeToFit];
     
     currentY = [self addMultiImageViewWithImageResourceArray:neighbour.mediaFiles withCurrentX:CGRectGetMinX(contentLabel.frame) andCurrentY:CGRectGetMaxY(checkFullLabel.frame) + kSubViewPadding];
     
-    return currentY;
+    // 设置like和view等icon和label
+    CGFloat iconLabelWidth = leftContentWidth/4 - kSubViewPadding*2 - kIconImageViewWidth;
+    likeIconImageView.frame = CGRectMake(leftContentOriginX, currentY, kIconImageViewWidth, kIconImageViewWidth);
+    
+    likeNumLabel.frame = CGRectMake(CGRectGetMaxX(likeIconImageView.frame) + kSubViewPadding, CGRectGetMinY(likeIconImageView.frame), iconLabelWidth, 15);
+    likeNumLabel.text = [neighbour.likesNum integerValue] > 0 ? [NSString stringWithFormat:@"%ld", (long)[neighbour.likesNum integerValue]] : @"";
+    
+    commentIconImageView.frame = CGRectMake(leftContentOriginX + leftContentWidth/4, currentY, kIconImageViewWidth, kIconImageViewWidth);
+    commentNumLabel.frame = CGRectMake(CGRectGetMaxX(commentIconImageView.frame) + kSubViewPadding, CGRectGetMinY(commentIconImageView.frame), iconLabelWidth, kIconImageViewWidth);
+    commentNumLabel.text = [neighbour.commentNum integerValue] > 0 ? [NSString stringWithFormat:@"%ld", (long)[neighbour.commentNum integerValue]] : @"";
+    
+    viewIconImageView.frame = CGRectMake(leftContentOriginX + leftContentWidth/2, currentY, kIconImageViewWidth, kIconImageViewWidth);
+    viewNumLabel.frame = CGRectMake(CGRectGetMaxX(viewIconImageView.frame) + kSubViewPadding, CGRectGetMinY(viewIconImageView.frame), iconLabelWidth, kIconImageViewWidth);
+    viewNumLabel.text = [neighbour.viewNum integerValue] > 0 ? [NSString stringWithFormat:@"%ld", (long)[neighbour.viewNum integerValue]] : @"";
+    
+    shareIconImageView.frame = CGRectMake(leftContentOriginX + leftContentWidth/4 * 3, currentY, kIconImageViewWidth, kIconImageViewWidth);
+    
+    currentY = currentY + kIconImageViewWidth + kSubViewPadding;
+    return currentY ;
 }
 
 - (CGFloat)addMultiImageViewWithImageResourceArray:(NSArray *)sourceArray withCurrentX:(CGFloat)originX andCurrentY:(CGFloat)originY
@@ -162,9 +230,9 @@ static CGFloat const kImageViewPadding = 5.0f;
     }
     
     CGFloat multiImageViewsHeight = 0;
-    CGFloat sourceImageViewWidth = 0;
+   
     if (sourceArray.count <= 3) {
-        sourceImageViewWidth = 75;
+        
         multiImageViewsHeight = 75;
     }else
     {
@@ -174,21 +242,20 @@ static CGFloat const kImageViewPadding = 5.0f;
         {
             multiImageViewsHeight = 75*3+kImageViewPadding*2;
         }
-        sourceImageViewWidth = 75;
     }
     
     for (int i = 0; i < sourceArray.count; i++) {
         ImageResource *resource = sourceArray[i];
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
         if (i < 3) {
-            imageView.frame = CGRectMake(originX + i*sourceImageViewWidth + kImageViewPadding * i, originY, sourceImageViewWidth, sourceImageViewWidth);
+            imageView.frame = CGRectMake(originX + i*kResImageViewWidth + kImageViewPadding * i, originY, kResImageViewWidth, kResImageViewWidth);
         }else if(i >=3 && i <=5)
         {
-            imageView.frame = CGRectMake(originX + sourceImageViewWidth*(i%3) + kImageViewPadding * (i%3), originY + kImageViewPadding + sourceImageViewWidth, sourceImageViewWidth, sourceImageViewWidth);
+            imageView.frame = CGRectMake(originX + kResImageViewWidth*(i%3) + kImageViewPadding * (i%3), originY + kImageViewPadding + kResImageViewWidth, kResImageViewWidth, kResImageViewWidth);
 
         }else
         {
-            imageView.frame = CGRectMake(originX+ sourceImageViewWidth*(i%3) + kImageViewPadding * (i%3), originY + kImageViewPadding *2 + sourceImageViewWidth * 2, sourceImageViewWidth, sourceImageViewWidth);
+            imageView.frame = CGRectMake(originX+ kResImageViewWidth*(i%3) + kImageViewPadding * (i%3), originY + kImageViewPadding *2 + kResImageViewWidth * 2, kResImageViewWidth, kResImageViewWidth);
            
         }
         imageView.backgroundColor = [UIColor whiteColor];

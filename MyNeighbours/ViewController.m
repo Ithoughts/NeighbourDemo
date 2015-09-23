@@ -33,6 +33,7 @@ static NSString * const kCellID = @"kNeighbourCellID";
     
     _mTableView.tableFooterView = [[UIView alloc] init];
     [_mTableView registerClass:[NeighbourTableViewCell class] forCellReuseIdentifier:kCellID];
+    // 设置estimatedRowHeight可以让cellForIndex先于rowforheight方法执行，保证我们的计算行高方法只运行一次。
     _mTableView.estimatedRowHeight = 100;
     
     NSDictionary *testDict = [NSDictionary dictionaryWithContentsOfJSONString:@"TestJSONData" andFileType:@"json"];

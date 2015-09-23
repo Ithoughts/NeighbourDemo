@@ -18,7 +18,11 @@
 @property (nonatomic, strong, readonly) NSURL *senderAvatar;
 @property (nonatomic, strong, readonly) NSNumber *sendTime;
 @property (nonatomic, strong, readonly) NSNumber *hotFlag;
+@property (nonatomic, strong, readonly) NSNumber *viewNum;
+@property (nonatomic, strong, readonly) NSNumber *likesNum;
+@property (nonatomic, strong, readonly) NSNumber *commentNum;
 @property (nonatomic, strong, readonly) NSArray *mediaFiles;
+@property (nonatomic, strong, readonly) NSArray *comments;
 
 @end
 
